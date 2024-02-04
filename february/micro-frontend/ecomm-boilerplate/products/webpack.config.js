@@ -26,8 +26,9 @@ module.exports = {
       // what do you want to expose to the container? enter in key: value format
       // We are providing aliases just to make it easier while importing files in the host
       exposes: {
-        "./ProductsIndex": "./src/index",
+        "./ProductsIndex": "./src/bootstrap",
       },
+      shared: ["faker"],
     }),
   ],
 };
