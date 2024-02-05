@@ -22,7 +22,7 @@ const commonConfig = require("./webpack.common");
 const devConfig = {
   mode: "development",
   devServer: {
-    port: 8081,
+    port: 8080,
     historyApiFallback: {
       index: "index.html",
     },
@@ -32,10 +32,9 @@ const devConfig = {
       template: "./public/index.html",
     }),
     new moduleFederationPlugin({
-      name: "marketing",
-      filename: "remoteEntry.js",
-      exposes: {
-        "./MarketingApp": "./src/bootstrap",
+      name: "container",
+      remotes: {
+        marketing: "marketing@http://localhost:8081/remoteEntry.js",
       },
       shared: packageJson.dependencies,
     }),
