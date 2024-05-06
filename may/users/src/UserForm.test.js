@@ -8,9 +8,44 @@ test("check for 2 inputs and a button", () => {
 
   //   check if the inputs and the button are being rendered
   const inputs = screen.getAllByRole("textbox");
+  //    you must use getByRole when you only have 1 element that matches the query, otherwise you'll get an error
   const button = screen.getByRole("button");
 
   // assertion: to make sure that the component is behaving as expected
   expect(inputs).toHaveLength(2);
   expect(button).toBeInTheDocument();
+});
+
+// typing into the input fields and then submitting the form should trigger the onUserAdd fn
+
+test("should call onUserAdd when the form is submitted", async () => {
+  // NOT THE BEST IMPLEMENTATION
+
+  const argList = [];
+  const callback = (...args) => {
+    argList.push(args);
+  };
+  // try to render the component
+  render(<UserForm onUserAdd={callback} />);
+
+  // find the 2 inputs
+  const [nameInput, emailInput] = screen.getAllByRole("textbox");
+
+  // simulate typing in a name
+  await user.click(nameInput);
+  await user.keyboard("test name");
+
+  // simulate typing in a email
+  await user.click(emailInput);
+  await user.keyboard("test@test.com");
+
+  // find the button
+  const button = screen.getByRole("button");
+
+  // simulate clicking the button
+  await user.click(button);
+
+  // assertion to make sure onUserAdd is called with email and name
+  expect(argList).toHaveLength(1);
+  expect(argList[0][0]).toEqual({ name: "test name", email: "test@test.com" });
 });
