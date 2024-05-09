@@ -48,3 +48,25 @@ test("should call onUserAdd when the form is submitted", async () => {
     email: "test@test.com",
   });
 });
+
+test("empties the 2 inputs when the form is submitted", async () => {
+  // since we dont really care if the user is being added, we can just pass in an empty fn to the onUserAdd prop, because this is not the scope of this test
+  render(<UserForm onUserAdd={() => {}} />);
+
+  const nameInput = screen.getByRole("textbox", { name: /name/i });
+  const emailInput = screen.getByRole("textbox", { name: /email/i });
+
+  await user.click(nameInput);
+  await user.keyboard("brihadeesh");
+
+  await user.click(emailInput);
+  await user.keyboard("brihadeesh@test.com");
+
+  const button = screen.getByRole("button", { name: /add user/i });
+
+  await user.click(button);
+
+  // now here is where we write the logic for checking if the inputs are empty
+  expect(nameInput).toHaveValue("");
+  expect(emailInput).toHaveValue("");
+});
