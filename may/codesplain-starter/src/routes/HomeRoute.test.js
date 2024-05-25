@@ -1,42 +1,23 @@
 import { render, screen } from "@testing-library/react";
-import { setupServer } from "msw/node";
-import { rest } from "msw";
 import { MemoryRouter } from "react-router-dom";
+import { createServer } from "../test/server";
 import HomeRoute from "./HomeRoute";
 
-const handlers = [
-  rest.get("/api/repositories", (req, res, ctx) => {
-    const language = req.url.searchParams.get("q").split("language:")[1];
+createServer([
+  {
+    path: "/api/repositories",
+    res: (req, res, ctx) => {
+      const language = req.url.searchParams.get("q").split("language:")[1];
 
-    return res(
-      ctx.json({
+      return {
         items: [
           { id: 1, full_name: `${language}_one` },
           { id: 2, full_name: `${language}_two` },
         ],
-      })
-    );
-  }),
-];
-
-const server = setupServer(...handlers);
-
-// going to be executed once before running all the tests in this file
-beforeAll(() => {
-  server.listen();
-});
-
-// going to be run after every individual test in this file, regardless of it passing or failing
-afterEach(() => {
-  // going to reset the handlers to their initial state
-  // note that we arent really modifying this or anything, but its just something that we have to give
-  server.restoreHandlers();
-});
-
-// going to be executed once after running all the tests in this file
-afterAll(() => {
-  server.close();
-});
+      };
+    },
+  },
+]);
 
 // jest.mock("", () => {
 //     return () => {
