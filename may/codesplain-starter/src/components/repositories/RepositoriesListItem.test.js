@@ -1,6 +1,12 @@
-import { screen, render } from "@testing-library/react";
+import { screen, render, act } from "@testing-library/react";
 import RepositoriesListItem from "./RepositoriesListItem";
 import { MemoryRouter } from "react-router-dom";
+
+// jest.mock("../tree/FileIcon", () => {
+//   return () => {
+//     return <div>FileIcon</div>;
+//   };
+// });
 
 function renderComponent() {
   const repository = {
@@ -21,13 +27,10 @@ function renderComponent() {
 test("to check if the link is being shown in the list item", async () => {
   renderComponent();
 
+  // await act(async () => {
+  //   await pause();
+  // });
   await screen.findByRole("img", { name: /js/i });
 });
 
-const pause = () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, 100);
-  });
-};
+const pause = () => new Promise((res) => setTimeout(res, 100));
