@@ -2,7 +2,7 @@ import { setupServer } from "msw/node";
 import { rest } from "msw";
 
 /**
-FROM 
+TO 
 createServer([
     {
         path: '',
@@ -15,7 +15,7 @@ createServer([
     }
 ])
 
-TO
+FROM 
 const handlers = [
   rest.get("/api/repositories", (req, res, ctx) => {
     const language = req.url.searchParams.get("q").split("language:")[1];
