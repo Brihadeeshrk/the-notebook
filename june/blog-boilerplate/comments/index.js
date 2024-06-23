@@ -12,7 +12,6 @@ app.use(bodyParser.json());
 
 app.get("/posts/:id/comments", async (req, res, next) => {
   const { id } = req.params;
-
   res.send(commentsByPostId[id] || []);
 });
 
@@ -26,7 +25,22 @@ app.post("/posts/:id/comments", async (req, res, next) => {
 
   commentsByPostId[id] = existingComments;
 
+  await axios.post("http://localhost:4005/events", {
+    type: "CommentCreated",
+    data: {
+      id: commentId,
+      comment,
+      postId: id,
+    },
+  });
+
   res.status(201).send(commentsByPostId[id]);
+});
+
+app.post("/events", async (req, res) => {
+  console.log("RECEIVED EVENT", req.body.type);
+
+  res.send({});
 });
 
 app.listen(4001, () => {
