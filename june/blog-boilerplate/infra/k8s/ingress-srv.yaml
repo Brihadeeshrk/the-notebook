@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-srv
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: posts.com
+      http:
+        paths: # just like how we define routes in express, with / at the end, we follow the same approach here as well when defining paths
+          - path: /posts/create
+            pathType: Prefix # if you want to suppress errors you can use ImplementationSpecific
+            backend:
+              service:
+                name: posts-clusterip-srv
+                port:
+                  number: 4000
+          - path: /posts
+            pathType: Prefix # if you want to suppress errors you can use ImplementationSpecific
+            backend:
+              service:
+                name: query-srv
+                port:
+                  number: 4002
+          - path: /posts/?(.*)/comments # nginx/yaml doesnt support :id/comments syntax. instead we have to write regex and (.*) is a wildcard and allows anything as long as it ends with /comments
+            pathType: ImplementationSpecific # if you want to suppress errors you can use ImplementationSpecific or stick with Prefix
+            backend:
+              service:
+                name: comments-srv
+                port:
+                  number: 4001
+          - path: /?(.*)
+            pathType: Prefix # if you want to suppress errors you can use ImplementationSpecific
+            backend:
+              service:
+                name: client-srv
+                port:
+                  number: 3000
